@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @RestController
 public class WxController {
@@ -65,5 +66,12 @@ public class WxController {
         wxDao.insertGoodsAddress(goodsAddress);
         return ResponseEntity.ok(new BaseResponse(200,"添加成功",null));
     }
-
+    /*
+    @Param: openid 客户端传过来openid， mapper中查询的时候字段为userid。
+     */
+    @PostMapping("wx-api/addressList")
+    public ResponseEntity<?> addressList(String openid){
+        List<GoodsAddress> list = wxDao.addressList(openid);
+        return ResponseEntity.ok(new BaseResponse(200,"获取成功",list));
+    }
 }
