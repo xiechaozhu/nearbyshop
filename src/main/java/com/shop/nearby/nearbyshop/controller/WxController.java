@@ -74,4 +74,13 @@ public class WxController {
         List<GoodsAddress> list = wxDao.addressList(openid);
         return ResponseEntity.ok(new BaseResponse(200,"获取成功",list));
     }
+    /*
+    设置默认收货地址
+     */
+    @PostMapping("wx-api/setDefaultAddress")
+    public ResponseEntity<?> setDefaultAddress(Integer id,String openid){
+        wxDao.setDefaultAddress2(openid);
+        wxDao.setDefaultAddress(id);
+        return ResponseEntity.ok(new BaseResponse(200,"设置成功",null));
+    }
 }

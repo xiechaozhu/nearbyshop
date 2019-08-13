@@ -12,4 +12,5 @@ public class GoodsAddress {
     private String city;
     private String county;
     private String address;
+    private Integer isDefault;
 }

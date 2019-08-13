@@ -3,6 +3,7 @@ package com.shop.nearby.nearbyshop.dao;
 import com.shop.nearby.nearbyshop.model.GoodsAddress;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,4 +25,9 @@ public interface WxDao{
     //根据openid查询收货地址
     @Select("select * from goodsAddress where userId = #{openid} ")
     List<GoodsAddress> addressList(String openid);
+
+    @Update("update goodsAddress set isDefault=1 where id =#{}")
+    void setDefaultAddress(Integer id);
+    //设置默认收货地址
+
 }
