@@ -3,9 +3,7 @@ package com.shop.nearby.nearbyshop.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.shop.nearby.nearbyshop.dao.WxDao;
-import com.shop.nearby.nearbyshop.model.BaseResponse;
-import com.shop.nearby.nearbyshop.model.GoodsAddress;
-import com.shop.nearby.nearbyshop.model.SessionAndOpenId;
+import com.shop.nearby.nearbyshop.model.*;
 import com.shop.nearby.nearbyshop.utils.GetInterfaceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -79,8 +77,17 @@ public class WxController {
      */
     @PostMapping("wx-api/setDefaultAddress")
     public ResponseEntity<?> setDefaultAddress(Integer id,String openid){
-        wxDao.setDefaultAddress2(openid);
-        wxDao.setDefaultAddress(id);
-        return ResponseEntity.ok(new BaseResponse(200,"设置成功",null));
+        wxDao.setDefaultAddress2(openid);//先把用户所有的地址设置成非默认的
+        wxDao.setDefaultAddress(id);//然后把当前地址设置成默认的
+        GoodsAddress goodsAddress = wxDao.getAddressById(id);
+        return ResponseEntity.ok(new BaseResponse(200,"设置成功",goodsAddress));
+    }
+    /*
+    上传商品
+     */
+    @PostMapping("wx-api/upGoods")
+    public ResponseEntity<?> upGoods(Goods goods){
+
+        return ResponseEntity.ok(new BaseResponse(200,"上传成功",null));
     }
 }

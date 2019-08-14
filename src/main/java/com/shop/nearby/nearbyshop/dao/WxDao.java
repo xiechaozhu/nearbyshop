@@ -21,13 +21,16 @@ public interface WxDao{
     @Insert("insert into goodsAddress(userId,name,phoneNum,province,city,county,address)" +
             "values(#{userId},#{name},#{phoneNum},#{province},#{city},#{county},#{address})")
     void insertGoodsAddress(GoodsAddress goodsAddress);
-
     //根据openid查询收货地址
     @Select("select * from goodsAddress where userId = #{openid} ")
     List<GoodsAddress> addressList(String openid);
-
-    @Update("update goodsAddress set isDefault=1 where id =#{}")
-    void setDefaultAddress(Integer id);
     //设置默认收货地址
-
+    @Update("update goodsAddress set isDefault=1 where id =#{id}")
+    void setDefaultAddress(Integer id);
+    //根据openid更新收货地址为非默认地址
+    @Update("update goodsAddress set isDefault=0 where userId =#{openid}")
+    void setDefaultAddress2(String openid);
+    //根据id查询收货地址
+    @Select("select * from goodsAddress where id =#{id}")
+    GoodsAddress getAddressById(Integer id);
 }
