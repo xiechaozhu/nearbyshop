@@ -1,6 +1,7 @@
 package com.shop.nearby.nearbyshop.dao;
 
 import com.shop.nearby.nearbyshop.model.GoodsAddress;
+import com.shop.nearby.nearbyshop.model.Shop;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -33,4 +34,16 @@ public interface WxDao{
     //根据id查询收货地址
     @Select("select * from goodsAddress where id =#{id}")
     GoodsAddress getAddressById(Integer id);
+    //获取店铺的收藏列表
+    @Select("select si.* from shopInfo si,shopCollect sc " +
+            "where sc.shopId=si.id and sc.openid = #{openid}")
+    List<Shop> getShopCollectionListByOpenid(String openid);
+    //上传店铺
+    void insertShop(Shop shop);
+    //根据openid更新用户是否是商户
+    @Update("update openids set isSeller=1 where openid =#{openid}")
+    void updateOpenid(String openid);
+    //添加店铺的图片
+    @Update("update shopInfo set pic=#{uuname} where id = #{id}")
+    void updateShopId(Integer id, String uuname);
 }

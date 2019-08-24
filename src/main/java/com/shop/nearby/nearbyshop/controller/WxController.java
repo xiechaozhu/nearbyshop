@@ -9,16 +9,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class WxController {
 
     @Value("${getSessionUrl}")
     private String getSessionUrl;
+
+    @Value("${filepath}")
+    private String filepath;
     @Autowired
     WxDao wxDao;
 
@@ -83,11 +93,51 @@ public class WxController {
         return ResponseEntity.ok(new BaseResponse(200,"设置成功",goodsAddress));
     }
     /*
+    上传商铺
+     */
+    @PostMapping("wx-api/upShop")
+    public ResponseEntity<?> upShop(Shop shop){
+        //插入商铺
+        wxDao.insertShop(shop);
+        //并且改变身份为seller
+        wxDao.updateOpenid(shop.getOpenid());
+        return ResponseEntity.ok(new BaseResponse(200,"上传成功",shop.getId()));
+    }
+    @PostMapping("upImage")
+    public String upImage(@RequestParam("file") MultipartFile file, Integer id){
+        //这个是文件名，以后有时间修改。
+        String uuname= UUID.randomUUID().toString().replaceAll("-", "")+".jpg";
+        if (!file.isEmpty()) {
+            try {
+                BufferedOutputStream out = new BufferedOutputStream(
+                        new FileOutputStream(filepath+uuname));
+                out.write(file.getBytes());
+                out.flush();
+                out.close();
+                wxDao.updateShopId(id,uuname);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return "";
+    }
+    /*
     上传商品
      */
     @PostMapping("wx-api/upGoods")
     public ResponseEntity<?> upGoods(Goods goods){
 
         return ResponseEntity.ok(new BaseResponse(200,"上传成功",null));
+    }
+
+    /*
+    店铺收藏列表
+     */
+    @PostMapping("wx-api/shopCollectionList")
+    public ResponseEntity<?> shopCollectionList(String openid){
+        List<Shop> collectionList = wxDao.getShopCollectionListByOpenid(openid);
+        return ResponseEntity.ok(new BaseResponse(200,"获取列表成功",collectionList));
     }
 }

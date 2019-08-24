@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shop.nearby.nearbyshop.dao.WxDao">
+    <insert id="insertShop" parameterType="com.shop.nearby.nearbyshop.model.Shop" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO shopinfo(openid,shopname,adminname,phonenum,lng,lat,addressDetails,code)
+     VALUES (#{openid},#{shopName},#{adminName},#{phoneNum},#{lng},#{lat},#{addressDetails},#{code})
+    </insert>
+</mapper>
