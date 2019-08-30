@@ -14,7 +14,10 @@ public class MyConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new SessionInterceptor()).addPathPatterns("/wx-api/**");
+        registry.addInterceptor(new BackSessionInterceptor()).addPathPatterns("/back/**","/")
+        ;
     }
+
 //    @Override
 //    public void addResourceHandlers(ResourceHandlerRegistry registry) {
 //        registry.addResourceHandler("back/pic/**").addResourceLocations("file:/img/");

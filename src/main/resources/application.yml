@@ -23,3 +23,5 @@ mybatis:
 logging:
   level:
     com.shop.nearby.nearbyshop.dao.WxDao: debug
+    com.shop.nearby.nearbyshop.dao.BackDao: debug
+

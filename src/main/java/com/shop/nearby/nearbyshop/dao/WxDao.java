@@ -2,6 +2,7 @@ package com.shop.nearby.nearbyshop.dao;
 
 import com.shop.nearby.nearbyshop.model.GoodsAddress;
 import com.shop.nearby.nearbyshop.model.Shop;
+import com.shop.nearby.nearbyshop.model.UserInfo;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -13,8 +14,8 @@ import java.util.List;
 public interface WxDao{
     //ToDo 这里到时候需要在服务器上设置mysql大小写不敏感
     //查询是否有当前openid
-    @Select("select openid from openIds where openid=#{openid}")
-    String selectWxUserByOpenid(String openid);
+    @Select("select * from openIds where openid=#{openid}")
+    UserInfo selectWxUserByOpenid(String openid);
     //新添加openid
     @Insert("insert into openIds(openid) values (#{openid})")
     void insertOpenid(String openid);
@@ -40,10 +41,21 @@ public interface WxDao{
     List<Shop> getShopCollectionListByOpenid(String openid);
     //上传店铺
     void insertShop(Shop shop);
-    //根据openid更新用户是否是商户
+    //根据openid更新用户是否是商户,是否是用户
     @Update("update openids set isSeller=1 where openid =#{openid}")
     void updateOpenid(String openid);
     //添加店铺的图片
     @Update("update shopInfo set pic=#{uuname} where id = #{id}")
     void updateShopId(Integer id, String uuname);
+    //查询默认地址
+    @Select("select id from goodsaddress where isdefault=1 and userid=#{openid}")
+    Integer getDefaultAddressId(String openid);
+    @Update("update openids set isUser=1,name=#{name},phonenum=#{phoneNum},address=#{address}" +
+            ",province=#{province},city=#{city},county=#{county} where openid=#{userId}")
+    void updateUserInfo(GoodsAddress goodsAddress);
+    @Select("select isUser from openids where openid=#{openid}")
+    Integer getIsUser(String openid);
+    @Update("update openids set isUser=1,name=#{adminName},phonenum=#{phoneNum},address=#{addressDetails} " +
+            " where openid=#{openid}")
+    void updateOpenid2(Shop shop);
 }

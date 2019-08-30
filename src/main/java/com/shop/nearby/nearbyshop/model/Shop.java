@@ -3,7 +3,7 @@ package com.shop.nearby.nearbyshop.model;
 import lombok.Data;
 
 @Data
-public class Shop {
+public class Shop  extends BasePage{
     private String openid;//店主openid
     private Integer id;
     private String touxiang;
@@ -15,4 +15,5 @@ public class Shop {
     private String lat;
     private String code;
     private String pic;
+    private Integer status;
 }

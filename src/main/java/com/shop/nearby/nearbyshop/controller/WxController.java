@@ -45,13 +45,16 @@ public class WxController {
         String session_key=(String)jsonObject.get("session_key");
         session.setAttribute(openid,session_key);//其实这里不用用openid作为key，使用一个写死的字符串就可以，
         //session中不会存在干扰
-        if(null==wxDao.selectWxUserByOpenid(openid)){
+        UserInfo userInfo = wxDao.selectWxUserByOpenid(openid);
+        if(null==userInfo){
             if("".equals(openid) || null==openid){
                 return null;
             }
             wxDao.insertOpenid(openid);
+            return new SessionAndOpenId(session_key,openid,userInfo);
         }
-        return new SessionAndOpenId(session_key,openid);
+        userInfo.setAddressId(wxDao.getDefaultAddressId(openid));
+        return new SessionAndOpenId(session_key,openid,userInfo);
     }
     //为什么要这么写，如果将前缀加在controller上，那么可以直接绕过前缀，访问接口，而拦截器按照前缀拦截就失去作用了
     @PostMapping("wx-api/test")
@@ -71,6 +74,10 @@ public class WxController {
         if(null==goodsAddress.getProvince()) return ResponseEntity.ok(new BaseResponse(200,"请选择省",null));
         if(null==goodsAddress.getCity()) return ResponseEntity.ok(new BaseResponse(200,"请选择市",null));
         if(null==goodsAddress.getCounty()) return ResponseEntity.ok(new BaseResponse(200,"请选择县",null));
+        //新添加的地址默认为，默认地址，先把其他地址状态改为0
+        wxDao.setDefaultAddress2(goodsAddress.getUserId());//先把用户所有的地址设置成非默认的
+        //因为是默认地址，所有用户信息就在这里添加
+        wxDao.updateUserInfo(goodsAddress);
         wxDao.insertGoodsAddress(goodsAddress);
         return ResponseEntity.ok(new BaseResponse(200,"添加成功",null));
     }
@@ -89,7 +96,9 @@ public class WxController {
     public ResponseEntity<?> setDefaultAddress(Integer id,String openid){
         wxDao.setDefaultAddress2(openid);//先把用户所有的地址设置成非默认的
         wxDao.setDefaultAddress(id);//然后把当前地址设置成默认的
+        //然后更新用户信息
         GoodsAddress goodsAddress = wxDao.getAddressById(id);
+        wxDao.updateUserInfo(goodsAddress);
         return ResponseEntity.ok(new BaseResponse(200,"设置成功",goodsAddress));
     }
     /*
@@ -97,10 +106,16 @@ public class WxController {
      */
     @PostMapping("wx-api/upShop")
     public ResponseEntity<?> upShop(Shop shop){
+        //判断是不是用户isuser
+        //如果不是用户那么把他变为用户。设置相关信息
+        String openid=shop.getOpenid();
+        if(0==wxDao.getIsUser(openid)){
+            wxDao.updateOpenid2(shop);
+        }
         //插入商铺
         wxDao.insertShop(shop);
         //并且改变身份为seller
-        wxDao.updateOpenid(shop.getOpenid());
+        wxDao.updateOpenid(openid);
         return ResponseEntity.ok(new BaseResponse(200,"上传成功",shop.getId()));
     }
     @PostMapping("upImage")
@@ -122,14 +137,6 @@ public class WxController {
             }
         }
         return "";
-    }
-    /*
-    上传商品
-     */
-    @PostMapping("wx-api/upGoods")
-    public ResponseEntity<?> upGoods(Goods goods){
-
-        return ResponseEntity.ok(new BaseResponse(200,"上传成功",null));
     }
 
     /*
