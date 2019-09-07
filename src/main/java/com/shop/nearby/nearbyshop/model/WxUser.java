@@ -11,4 +11,5 @@ public class WxUser extends BasePage{
     private String province;
     private String city;
     private String county;
+    private Integer isSeller;//审核通过了才是seller
 }

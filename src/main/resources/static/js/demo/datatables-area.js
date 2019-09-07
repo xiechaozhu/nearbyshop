@@ -51,15 +51,11 @@ $(function () {
             param.start = data.start;//开始的记录序号
             param.page = (data.start / data.length) + 1;//当前页码
             param.mohu = data.search.value;//搜索条件
-            if (data.order.length > 0) {
-                param.order = data.columns[data.order[0].column].data;
-                param.dir = data.order[0].dir;
-            }
             console.log(param);
 //ajax请求数据
             $.ajax({
                 type: "GET",
-                url: "shops",
+                url: "areaagents",
                 cache: false, //禁用缓存
                 data: param, //传入组装的参数
                 dataType: "json",
@@ -78,40 +74,17 @@ $(function () {
         },
 //列表表头字段
         columns: [
-            {"data": "id"},
-            {"data": "shopName"},
-            {"data": "adminName"},
-            {"data": "phoneNum"},
-            {"data": "addressDetails"},
-            {
-                "data": "pic",
-                render: function (data, type, row, metata) {
-                    return "<a style='text-decoration: none' href='" + data + "'>点击查看</a>"
+            {"data": "area"},
+            {"data": "name"},
+            {"data": "phone"},
+            { "data": "createtime",
+                "render" : function(data, type, full, meta) {
+                    return  moment(data).format("YYYY-MM-DD HH:mm:ss");
                 }
             },
-            {
-                "data": "status"
-                , render: function (data, type, row, meta) {
-                    if (data == 1) {
-                        return "审核成功"
-                    } else if (data == 2) {
-                        return "审核失败"
-                    } else {
-                        return "等待审核"
-                    }
-                }
-            },
-            {
-                "data": "id",
-                render: function (data, type, row, meta) {
-                    if (row.status == 1) {
-                        return ""
-                    }
-                    return '<button class="btn btn-info btn-sm"><i class="fa fa-pencil"></i><a style="text-decoration: none;color: white" href="checkpass?id='+data+'&openid='+row.openid+'">审核通过</a></button>'
-                        + '<button class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i><a style="text-decoration: none;color: white" href="checkdeny?id='+data+'&openid='+row.openid+'">审核失败</a></button>';
+            {"data": "username"},
+            {"data": "pwd"}
 
-                }
-            }
         ]
     }).api();
 //此处需调用api()方法,否则返回的是JQuery对象而不是DataTables的API对象

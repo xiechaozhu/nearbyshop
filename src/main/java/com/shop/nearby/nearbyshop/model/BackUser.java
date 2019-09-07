@@ -6,9 +6,9 @@ import java.util.List;
 
 @Data
 public class BackUser {
-    private Integer id;
+    private String openid;
     private String username;
     private String pwd;
-    private Integer power;
-    private List<Power> powers;
+    private Integer power;//角色1是管理员，2代理商，3商店店主
+    private List<Power> powers;//权限列表
 }

@@ -56,4 +56,57 @@
             AND concat(IFNULL(ga.name,''),IFNULL(ga.phonenum,''),IFNULL(g.name,'')) like CONCAT('%',#{order.mohu},'%')
         </if>
     </select>
+    <!--分页查询参数-->
+    <select id="findParamsByGoodsParam" resultType="com.shop.nearby.nearbyshop.model.GoodsParam">
+        SELECT * from types
+        WHERE shopid=#{param.shopid} AND 1=1
+        <if test="param.mohu != null and param.mohu !=''">
+            AND concat(IFNULL(type,''),IFNULL(subclass,'')) like CONCAT('%',#{param.mohu},'%')
+        </if>
+        LIMIT #{param.from},#{param.pageSize}
+    </select>
+    <!--查询参数总数-->
+    <select id="countParams" resultType="int">
+        select count(*)
+        FROM types
+        WHERE shopid=#{param.shopid} AND 1=1
+        <if test="param.mohu != null and param.mohu !=''">
+            AND concat(IFNULL(type,''),IFNULL(subclass,'')) like CONCAT('%',#{param.mohu},'%')
+        </if>
+    </select>
+    <!--分页查询商品数-->
+    <select id="findGoodsByGoods" resultType="com.shop.nearby.nearbyshop.model.Goods">
+        SELECT * from goods
+        WHERE shopid=#{goods.shopid} AND 1=1
+        <if test="goods.mohu != null and goods.mohu !=''">
+            AND concat(IFNULL(type,''),IFNULL(subclass,'')) like CONCAT('%',#{goods.mohu},'%')
+        </if>
+        LIMIT #{goods.from},#{goods.pageSize}
+    </select>
+    <!--查询商品总数-->
+    <select id="countGoods" resultType="int">
+        select count(*)
+        FROM goods
+        WHERE shopid=#{goods.shopid} AND 1=1
+        <if test="goods.mohu != null and goods.mohu !=''">
+            AND concat(IFNULL(type,''),IFNULL(subclass,'')) like CONCAT('%',#{goods.mohu},'%')
+        </if>
+    </select>
+    <!--分页查询代理商-->
+    <select id="findAreaAgentByAreaAgent" resultType="com.shop.nearby.nearbyshop.model.AreaAgent">
+        SELECT username,pwd,phone,name,area,createtime from backuser
+        WHERE power=2 AND 1=1
+        <if test="areaAgent.mohu != null and areaAgent.mohu !=''">
+            AND concat(IFNULL(phone,''),IFNULL(name,''),IFNULL(area,'')) like CONCAT('%',#{areaAgent.mohu},'%')
+        </if>
+        LIMIT #{areaAgent.from},#{areaAgent.pageSize}
+    </select>
+    <!--查询代理商总数-->
+    <select id="countAreaAgent" resultType="int">
+        select count(*) from backuser
+        WHERE power=2 AND 1=1
+        <if test="areaAgent.mohu != null and areaAgent.mohu !=''">
+            AND concat(IFNULL(phone,''),IFNULL(name,''),IFNULL(area,'')) like CONCAT('%',#{areaAgent.mohu},'%')
+        </if>
+    </select>
 </mapper>
