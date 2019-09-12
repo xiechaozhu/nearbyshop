@@ -76,6 +76,8 @@ public interface BackDao {
     @Insert("insert into backuser(username,pwd,power,phone,name,area) values(#{username},#{pwd},2,#{phone}," +
             "#{name},#{area})")
     void addAreaAgent(AreaAgent areaAgent);
+    @Select("select * from shopinfo where id=#{shopid}")
+    Shop getShopByid(int shopid);
 
     //
 

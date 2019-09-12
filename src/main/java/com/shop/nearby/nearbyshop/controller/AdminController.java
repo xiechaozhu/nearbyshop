@@ -294,7 +294,11 @@ public class AdminController {
     @Shopper("/back/addgoods")
     @RequestMapping("addgoods")
     public String addgoods(HttpSession session, Goods goods, @RequestParam("file") MultipartFile[] file) {
-        goods.setShopid((Integer) session.getAttribute("shopid"));
+        int shopid = (Integer) session.getAttribute("shopid");
+        Shop s=backDao.getShopByid(shopid);
+        goods.setShopid(shopid);
+        goods.setLat(s.getLat());
+        goods.setLng(s.getLng());
         for (int i = 0; i < file.length; ++i) {
             String filename = UUID.randomUUID().toString() + ".jpg";
             if (!file[i].isEmpty()) {

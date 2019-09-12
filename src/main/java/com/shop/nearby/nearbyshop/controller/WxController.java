@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.shop.nearby.nearbyshop.dao.WxDao;
 import com.shop.nearby.nearbyshop.model.*;
+import com.shop.nearby.nearbyshop.utils.GetDistenceUtil;
 import com.shop.nearby.nearbyshop.utils.GetInterfaceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.awt.geom.Point2D;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -148,5 +150,70 @@ public class WxController {
     public ResponseEntity<?> shopCollectionList(String openid) {
         List<Shop> collectionList = wxDao.getShopCollectionListByOpenid(openid);
         return ResponseEntity.ok(new BaseResponse(200, "获取列表成功", collectionList));
+    }
+
+    /*/
+    首页各类商品中的两个
+    进入首页传递经纬度过来，然后根据经纬度判断附近商品，
+    如果没有经纬度，那就所有商品得排名
+    前端取值从缓存中取，如果值改变了传递过来的值也要改变
+    lng精度，lat纬度
+     */
+    @PostMapping("wx-api/towGoodsOfKinds")
+    public ResponseEntity<?> towGoodsOfKinds(Double lat2,Double lng2) {
+
+        if(null==lat2&&null==lng2){
+            lng2=115.68;
+            lat2=37.73;
+        }
+        System.out.println(lat2);
+        System.out.println(lng2);
+        //附近五公里热度最高店家
+        List<Shop> shops=wxDao.selectShopTwo(lat2,lng2);
+        //附近热度最高两个商品
+        List<Goods> hot=wxDao.selectHotTwo(lat2,lng2);
+        //附近最高热度男装
+        List<Goods> man=wxDao.selectManTwo(lat2,lng2);
+        //附近最高热度女装
+        List<Goods> women=wxDao.selectWomenTwo(lat2,lng2);
+        //附近最高热度童装
+        List<Goods> childTwo=wxDao.selectChildTwo(lat2,lng2);
+        //附近最高热度鞋袜
+        List<Goods> shoesTwo=wxDao.selectSocksShoesTwo(lat2,lng2);
+        //附近最高热度帽子
+        Goods hat=wxDao.selectHat(lat2,lng2);
+        //热度最高箱包
+        Goods pack=wxDao.selectPack(lat2,lng2);
+        //附近最高热度配饰
+        Goods peishi=wxDao.selectPeishi(lat2,lng2);
+        //热度最高内衣
+        Goods underware=wxDao.selectUnderware(lat2,lng2);
+        //附近最高热度孕婴
+        List<Goods> babyTwo=wxDao.selectBabyTwo(lat2,lng2);
+
+        return ResponseEntity.ok(new BaseResponse(200, "获取列表成功",
+                new WxIndex(shops,hot,man,women,childTwo,shoesTwo,hat,pack,
+                        peishi,underware, babyTwo)));
+    }
+    /*/
+    根据类型获取商品
+    前期不做分页，后期要加分页功能
+    传递经纬度，由远到近排序商品
+    传递商品类型
+     */
+    @PostMapping("wx-api/getGoodsByType")
+    public ResponseEntity<?> getGoodsByType(Double lat2,Double lng2,String type) {
+        List<Goods> goods;
+        if(type.equals("hot")){
+            goods = wxDao.getGoodsByHot(lat2,lng2);
+        }else{
+            goods = wxDao.getGoodsByType(lat2,lng2,type);
+        }
+        return ResponseEntity.ok(new BaseResponse(200, "获取列表成功", goods));
+    }
+    //根据id获取商品
+    @PostMapping("wx-api/getOneGoods")
+    public ResponseEntity<?> getOneGoods(Integer id) {
+        return ResponseEntity.ok(new BaseResponse(200, "获取列表成功", wxDao.getOneGoods(id)));
     }
 }

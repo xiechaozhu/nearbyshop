@@ -1,5 +1,6 @@
 package com.shop.nearby.nearbyshop.dao;
 
+import com.shop.nearby.nearbyshop.model.Goods;
 import com.shop.nearby.nearbyshop.model.GoodsAddress;
 import com.shop.nearby.nearbyshop.model.Shop;
 import com.shop.nearby.nearbyshop.model.UserInfo;
@@ -58,4 +59,64 @@ public interface WxDao{
     @Update("update openids set isUser=1,name=#{adminName},phonenum=#{phoneNum},address=#{addressDetails} " +
             " where openid=#{openid}")
     void updateOpenid2(Shop shop);
+    @Select("SELECT shopname,(6371393 * ACOS(COS(RADIANS(#{lat2})) * COS(RADIANS(lat)) * " +
+            "COS(RADIANS(#{lng2} - lng)) + SIN(RADIANS(#{lat2})) * SIN(RADIANS(lat)))) d " +
+            "FROM shopinfo ORDER BY d ")
+    List<Shop> getShopOrderByDistance(Double lng2, Double lat2);
+    //附近1万米得热度最高两个店家
+    @Select("SELECT shopname,(6371393 * ACOS(COS(RADIANS(#{lat2})) * COS(RADIANS(lat)) * " +
+            "COS(RADIANS(#{lng2} - lng)) + SIN(RADIANS(#{lat2})) * SIN(RADIANS(lat)))) as d " +
+            "FROM shopinfo having d<10000 order by hot desc limit 0,2")
+    List<Shop> selectShopTwo(Double lat2, Double lng2);
+    //热度最高的两个商品
+    @Select("SELECT *,(6371393 * ACOS(COS(RADIANS(#{lat2})) * COS(RADIANS(lat)) * " +
+            "COS(RADIANS(#{lng2} - lng)) + SIN(RADIANS(#{lat2})) * SIN(RADIANS(lat)))) d " +
+            "FROM goods having d<10000 order by hot desc limit 0,2")
+    List<Goods> selectHotTwo(Double lat2, Double lng2);
+    @Select("SELECT *,(6371393 * ACOS(COS(RADIANS(#{lat2})) * COS(RADIANS(lat)) * " +
+            "COS(RADIANS(#{lng2} - lng)) + SIN(RADIANS(#{lat2})) * SIN(RADIANS(lat)))) d " +
+            "FROM goods having d<10000 and type='男装' order by hot desc limit 0,2")
+    List<Goods> selectManTwo(Double lat2, Double lng2);
+    @Select("SELECT *,(6371393 * ACOS(COS(RADIANS(#{lat2})) * COS(RADIANS(lat)) * " +
+            "COS(RADIANS(#{lng2} - lng)) + SIN(RADIANS(#{lat2})) * SIN(RADIANS(lat)))) d " +
+            "FROM goods having d<10000 and type='女装' order by hot desc limit 0,2")
+    List<Goods> selectWomenTwo(Double lat2, Double lng2);
+    @Select("SELECT *,(6371393 * ACOS(COS(RADIANS(#{lat2})) * COS(RADIANS(lat)) * " +
+            "COS(RADIANS(#{lng2} - lng)) + SIN(RADIANS(#{lat2})) * SIN(RADIANS(lat)))) d " +
+            "FROM goods having d<10000 and type='童装' order by hot desc limit 0,2")
+    List<Goods> selectChildTwo(Double lat2, Double lng2);
+    @Select("SELECT *,(6371393 * ACOS(COS(RADIANS(#{lat2})) * COS(RADIANS(lat)) * " +
+            "COS(RADIANS(#{lng2} - lng)) + SIN(RADIANS(#{lat2})) * SIN(RADIANS(lat)))) d " +
+            "FROM goods having d<10000 and type='鞋袜' order by hot desc limit 0,2")
+    List<Goods> selectSocksShoesTwo(Double lat2, Double lng2);
+    @Select("SELECT *,(6371393 * ACOS(COS(RADIANS(#{lat2})) * COS(RADIANS(lat)) * " +
+            "COS(RADIANS(#{lng2} - lng)) + SIN(RADIANS(#{lat2})) * SIN(RADIANS(lat)))) d " +
+            "FROM goods having d<10000 and type='帽子' order by hot desc limit 0,1")
+    Goods selectHat(Double lat2, Double lng2);
+    @Select("SELECT *,(6371393 * ACOS(COS(RADIANS(#{lat2})) * COS(RADIANS(lat)) * " +
+            "COS(RADIANS(#{lng2} - lng)) + SIN(RADIANS(#{lat2})) * SIN(RADIANS(lat)))) d " +
+            "FROM goods having d<10000 and type='箱包' order by hot desc limit 0,1")
+    Goods selectPack(Double lat2, Double lng2);
+    @Select("SELECT *,(6371393 * ACOS(COS(RADIANS(#{lat2})) * COS(RADIANS(lat)) * " +
+            "COS(RADIANS(#{lng2} - lng)) + SIN(RADIANS(#{lat2})) * SIN(RADIANS(lat)))) d " +
+            "FROM goods having d<10000 and type='孕婴' order by hot desc limit 0,2")
+    List<Goods> selectBabyTwo(Double lat2, Double lng2);
+    @Select("SELECT *,(6371393 * ACOS(COS(RADIANS(#{lat2})) * COS(RADIANS(lat)) * " +
+            "COS(RADIANS(#{lng2} - lng)) + SIN(RADIANS(#{lat2})) * SIN(RADIANS(lat)))) d " +
+            "FROM goods having d<10000 and type='配饰' order by hot desc limit 0,1")
+    Goods selectPeishi(Double lat2, Double lng2);
+    @Select("SELECT *,(6371393 * ACOS(COS(RADIANS(#{lat2})) * COS(RADIANS(lat)) * " +
+            "COS(RADIANS(#{lng2} - lng)) + SIN(RADIANS(#{lat2})) * SIN(RADIANS(lat)))) d " +
+            "FROM goods having d<10000 and type='内衣' order by hot desc limit 0,1")
+    Goods selectUnderware(Double lat2, Double lng2);
+    @Select("SELECT *,(6371393 * ACOS(COS(RADIANS(#{lat2})) * COS(RADIANS(lat)) * " +
+            "COS(RADIANS(#{lng2} - lng)) + SIN(RADIANS(#{lat2})) * SIN(RADIANS(lat)))) d " +
+            "FROM goods having d<100000 order by d,hot desc")
+    List<Goods> getGoodsByHot(Double lat2, Double lng2);
+    @Select("SELECT *,(6371393 * ACOS(COS(RADIANS(#{lat2})) * COS(RADIANS(lat)) * " +
+            "COS(RADIANS(#{lng2} - lng)) + SIN(RADIANS(#{lat2})) * SIN(RADIANS(lat)))) d " +
+            "FROM goods having d<100000 and type=#{type} order by hot desc")
+    List<Goods> getGoodsByType(Double lat2, Double lng2, String type);
+    @Select("select * from goods where id=#{id}")
+    Goods getOneGoods(Integer id);
 }
