@@ -38,7 +38,7 @@ public interface WxDao{
     GoodsAddress getAddressById(Integer id);
     //获取店铺的收藏列表
     @Select("select si.* from shopInfo si,shopCollect sc " +
-            "where sc.shopId=si.id and sc.openid = #{openid}")
+            "where sc.shopId=si.id and and sc.type=1 sc.openid = #{openid}")
     List<Shop> getShopCollectionListByOpenid(String openid);
     //上传店铺
     void insertShop(Shop shop);
@@ -64,10 +64,14 @@ public interface WxDao{
             "FROM shopinfo ORDER BY d ")
     List<Shop> getShopOrderByDistance(Double lng2, Double lat2);
     //附近1万米得热度最高两个店家
-    @Select("SELECT shopname,(6371393 * ACOS(COS(RADIANS(#{lat2})) * COS(RADIANS(lat)) * " +
+    @Select("SELECT *,(6371393 * ACOS(COS(RADIANS(#{lat2})) * COS(RADIANS(lat)) * " +
             "COS(RADIANS(#{lng2} - lng)) + SIN(RADIANS(#{lat2})) * SIN(RADIANS(lat)))) as d " +
             "FROM shopinfo having d<10000 order by hot desc limit 0,2")
     List<Shop> selectShopTwo(Double lat2, Double lng2);
+    @Select("SELECT *,(6371393 * ACOS(COS(RADIANS(#{lat2})) * COS(RADIANS(lat)) * " +
+            "COS(RADIANS(#{lng2} - lng)) + SIN(RADIANS(#{lat2})) * SIN(RADIANS(lat)))) as d " +
+            "FROM shopinfo having d<10000 order by hot desc")
+    List<Shop> selectShops(Double lat2, Double lng2);
     //热度最高的两个商品
     @Select("SELECT *,(6371393 * ACOS(COS(RADIANS(#{lat2})) * COS(RADIANS(lat)) * " +
             "COS(RADIANS(#{lng2} - lng)) + SIN(RADIANS(#{lat2})) * SIN(RADIANS(lat)))) d " +
@@ -113,10 +117,13 @@ public interface WxDao{
             "COS(RADIANS(#{lng2} - lng)) + SIN(RADIANS(#{lat2})) * SIN(RADIANS(lat)))) d " +
             "FROM goods having d<100000 order by d,hot desc")
     List<Goods> getGoodsByHot(Double lat2, Double lng2);
+    //一万米内的商品
     @Select("SELECT *,(6371393 * ACOS(COS(RADIANS(#{lat2})) * COS(RADIANS(lat)) * " +
             "COS(RADIANS(#{lng2} - lng)) + SIN(RADIANS(#{lat2})) * SIN(RADIANS(lat)))) d " +
             "FROM goods having d<100000 and type=#{type} order by hot desc")
     List<Goods> getGoodsByType(Double lat2, Double lng2, String type);
     @Select("select * from goods where id=#{id}")
     Goods getOneGoods(Integer id);
+    @Select("select * from goods where shopid=#{shopid}")
+    List<Goods> getGoodsByShopid(Integer shopid);
 }

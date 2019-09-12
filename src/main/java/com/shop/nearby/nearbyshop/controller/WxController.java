@@ -203,17 +203,39 @@ public class WxController {
      */
     @PostMapping("wx-api/getGoodsByType")
     public ResponseEntity<?> getGoodsByType(Double lat2,Double lng2,String type) {
+        type =type.trim();
         List<Goods> goods;
         if(type.equals("hot")){
             goods = wxDao.getGoodsByHot(lat2,lng2);
-        }else{
+        }else if(isNumericZidai(type)){
+            Integer shopid = Integer.parseInt(type);
+            goods = wxDao.getGoodsByShopid(shopid);
+        }else {
             goods = wxDao.getGoodsByType(lat2,lng2,type);
         }
         return ResponseEntity.ok(new BaseResponse(200, "获取列表成功", goods));
     }
+
+    public static boolean isNumericZidai(String str) {
+        for (int i = 0; i < str.length(); i++) {
+            System.out.println(str.charAt(i));
+            if (!Character.isDigit(str.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     //根据id获取商品
     @PostMapping("wx-api/getOneGoods")
     public ResponseEntity<?> getOneGoods(Integer id) {
-        return ResponseEntity.ok(new BaseResponse(200, "获取列表成功", wxDao.getOneGoods(id)));
+        Goods goods = wxDao.getOneGoods(id);
+        return ResponseEntity.ok(new BaseResponse(200, "获取列表成功", goods));
+    }
+    //附近一万米按热门排序商店
+    @PostMapping("wx-api/selectShops")
+    public ResponseEntity<?> selectShops(Double lat2,Double lng2) {
+        List<Shop> shops = wxDao.selectShops(lat2,lng2);
+        return ResponseEntity.ok(new BaseResponse(200, "获取列表成功", shops));
     }
 }
