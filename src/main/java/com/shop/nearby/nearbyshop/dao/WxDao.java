@@ -38,8 +38,12 @@ public interface WxDao{
     GoodsAddress getAddressById(Integer id);
     //获取店铺的收藏列表
     @Select("select si.* from shopInfo si,shopCollect sc " +
-            "where sc.shopId=si.id and and sc.type=1 sc.openid = #{openid}")
+            "where sc.shopId=si.id  and sc.type=1 and sc.openid = #{openid}")
     List<Shop> getShopCollectionListByOpenid(String openid);
+    //获取商品收藏列表
+    @Select("select si.* from goods si,shopCollect sc " +
+            "where sc.shopId=si.id  and sc.type=2 and sc.openid = #{openid}")
+    List<Goods> goodsCollectionList(String openid);
     //上传店铺
     void insertShop(Shop shop);
     //根据openid更新用户是否是商户,是否是用户
@@ -126,4 +130,5 @@ public interface WxDao{
     Goods getOneGoods(Integer id);
     @Select("select * from goods where shopid=#{shopid}")
     List<Goods> getGoodsByShopid(Integer shopid);
+
 }

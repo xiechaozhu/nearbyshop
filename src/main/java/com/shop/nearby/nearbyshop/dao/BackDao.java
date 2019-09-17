@@ -42,9 +42,9 @@ public interface BackDao {
 //    @Select("select * from types where shopid=#{shopid} and type = #{type} and subclass = #{subclass}")
 //    GoodsParam getparams(Integer shopid,String type,String subclass);
     @Insert("insert into goods (name,pic,content,shopid,price,stock,type,subclass," +
-            "paramone,onevalue,paramtwo,twovalue,paramthree,threevalue) values (" +
+            "paramone,onevalue,paramtwo,twovalue,paramthree,threevalue,lat,lng) values (" +
             "#{name},#{pic},#{content},#{shopid},#{price},#{stock},#{type},#{subclass}" +
-            ",#{paramone},#{onevalue},#{paramtwo},#{twovalue},#{paramthree},#{threevalue})")
+            ",#{paramone},#{onevalue},#{paramtwo},#{twovalue},#{paramthree},#{threevalue},#{lan},#{lng})")
     void saveGood(Goods goods);
 
     //分页查询商品

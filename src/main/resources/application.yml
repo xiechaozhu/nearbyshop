@@ -10,9 +10,11 @@ spring:
   freemarker:
     settings:
       classic_compatible: true
-appid: wxced69ea524ba4895
+appid: wx154a59fa3f782a78
 
-getSessionUrl: https://api.weixin.qq.com/sns/jscode2session?appid=wxced69ea524ba4895&secret=61384d2d0392401fce4377872fae88a3&grant_type=authorization_code&js_code=
+payorder: https://api.mch.weixin.qq.com/pay/unifiedorder
+
+getSessionUrl: https://api.weixin.qq.com/sns/jscode2session?appid=wx154a59fa3f782a78&secret=00d7421d6adb50c8280793bccd2c5436&grant_type=authorization_code&js_code=
 
 filepath: d:/
 
